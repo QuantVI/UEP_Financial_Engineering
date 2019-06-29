@@ -2,3 +2,5 @@
 ### at Poznan University of Economics and Business
 
 ###### Assorted code, and accompanying materials, from completed project and assignments in the Financial Engineering program.
+
+!(https://ue.poznan.pl/themes/img/logo_pl.png "University of Economics, Poznan")
