@@ -7,8 +7,11 @@
 
 
 _Selcected from_
-####Semester 1
-- Probability Theory and Stochastic Processes
-  - Matlab Project: Rolling an N-sided die, M times
- 
+
+1. Semester 1
+  - Probability Theory and Stochastic Processes
+      - Matlab Project: Rolling an N-sided die, M times
+1. Semester 2
+1. Semester 3
+1. Semester 4
  
