@@ -1,3 +1,4 @@
-<font size='6'> Financial Engineering</font><font size='4'> at Poznan University of Economics and Business</font>
+##Financial Engineering
+###at Poznan University of Economics and Business
 
 ###### Assorted code, and accompanying materials, from completed project and assignments in the Financial Engineering program.
