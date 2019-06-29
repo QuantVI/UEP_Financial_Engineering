@@ -12,20 +12,24 @@ _The program at the University of Economics, Poznan was different! Students had 
 
 __Selcected materials from__:
 
-1. Semester 1
-  - Probability Theory and Stochastic Processes
+1. Semester :one:
+  - Probability Theory and Stochastic Processes :game_die:
       - Matlab Project: Rolling an N-sided die, M times
-1. Semester 2
-  - VBA for Finance
+1. Semester :two:
+  - VBA for Finance :bar_chart:
       - Implementing a Put/Call option pricer
       - Using 3 methods: Binomial, Black Scholes, Monte Carlo
-  - Financial Econometrics
+  - Financial Econometrics :chart_with_upwards_trend:
       - Time-series analysis of a publicly-traded stock
       - Using information from the series, to suggest a model specification
       - Creating an ARMA and a GARCH model to fit the data, residuals
       - _software used: OxMetrics_
-  - Derivatives Pricing
+  - Derivatives Pricing :chart_with_downwards_trend:
       - VBA Macro for pricing and analysis of a Fixed-Strike Lookback option
-1. Semester 3
-1. Semester 4
+1. Semester :three:
+  - Bayesian Methods in Finance
+  - Financial Market Modeling
+1. Semester :four:
+  - Exotic Options
+  - Credit Valuation Adjustment
  
