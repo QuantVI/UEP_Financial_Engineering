@@ -24,7 +24,7 @@ __Selcected materials from__:
           - FX-Forward
           - Interest Rate Swap (IRS)
           - Cross-currency IRS
-      - Final presentation includes my Buy/Sell recommendations
+      -  My Buy/Sell recommendations
       - The code implementaton in R, was done by a teammate
 
 **Semester** :three:
