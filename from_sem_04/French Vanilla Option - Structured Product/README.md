@@ -1,6 +1,6 @@
-*It was extremely fun designing this product. I took a cue from the naming conventions of options and other products in the market. For example, "Mountain Range" options. The naming is chosen to be marketable, not necessarily based on the insturment itself.*
+*It was extremely fun designing this product. I took a cue from the naming conventions of options and other products on the market. For example, "Mountain Range" options. The naming is chosen to be marketable, not necessarily based on the instrument itself.*
 
-*It most courses, we would do simulations with 100 to 10 000 iterations. I wanted my pricing to be more precises, and thus ran multiple 40K iteration tests in this project.*
+*It most courses, we would do simulations with 100 to 5000 iterations on simple paths. I wanted my pricing to be more precise, and thus ran multiple 40K iterations on complex paths with 2000 or more steps.*
 
 #### Project - Structured Product
 
