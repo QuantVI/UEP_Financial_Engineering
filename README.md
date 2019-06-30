@@ -12,26 +12,7 @@ _The program at the University of Economics, Poznan was different! Students had 
 
 __Selcected materials from__:
 
-1. **Semester** :one:
-  - Probability Theory and Stochastic Processes :game_die:
-      - Matlab Project: Rolling an N-sided die, M times
-1. **Semester** :two:
-  - VBA for Finance :bar_chart:
-      - Implementing a Put/Call option pricer
-      - Using 3 methods: Binomial, Black Scholes, Monte Carlo
-  - Financial Econometrics :chart_with_upwards_trend:
-      - Time-series analysis of a publicly-traded stock
-      - Using information from the series, to suggest a model specification
-      - Creating an ARMA and a GARCH model to fit the data, residuals
-      - _software used: OxMetrics_
-  - Derivatives Pricing :chart_with_downwards_trend:
-      - VBA Macro for pricing and analysis of a Fixed-Strike Lookback option
-1. **Semester** :three:
-  - Bayesian Methods in Finance :link:
-      - Markov Chains & Gibbs Sampler
-  - Financial Market Modeling :chart:
-      - Seasonal ARIMA model of the US unemployment rate
-1. **Semester** :four:
+- **Semester** :four:
   - Exotic Options :currency_exchange:
       - Creation and Valuation of a Structured Product
           - Product: The "French Vanilla Option"
@@ -45,4 +26,25 @@ __Selcected materials from__:
           - Cross-currency IRS
       - Final presentation includes my Buy/Sell recommendations
       - The code implementaton in R, was done by a teammate
+- **Semester** :three:
+  - Bayesian Methods in Finance :link:
+      - Markov Chains & Gibbs Sampler
+  - Financial Market Modeling :chart:
+      - Seasonal ARIMA model of the US unemployment rate
+- **Semester** :two:
+  - VBA for Finance :bar_chart:
+      - Implementing a Put/Call option pricer
+      - Using 3 methods: Binomial, Black Scholes, Monte Carlo
+  - Financial Econometrics :chart_with_upwards_trend:
+      - Time-series analysis of a publicly-traded stock
+      - Using information from the series, to suggest a model specification
+      - Creating an ARMA and a GARCH model to fit the data, residuals
+      - _software used: OxMetrics_
+  - Derivatives Pricing :chart_with_downwards_trend:
+      - VBA Macro for pricing and analysis of a Fixed-Strike Lookback option
+- **Semester** :one:
+  - Probability Theory and Stochastic Processes :game_die:
+      - Matlab Project: Rolling an N-sided die, M times
+
+
  
