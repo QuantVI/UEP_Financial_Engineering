@@ -1,7 +1,7 @@
-######The project
-##Project scope: Credit Valuation Adjustments for Derivative Contracts###### Key task: Prepare a report describing applied methodology, as well as CVA calculation results for different types of derivative instruments.
+###### The project
+## Project scope: Credit Valuation Adjustments for Derivative Contracts###### Key task: Prepare a report describing applied methodology, as well as CVA calculation results for different types of derivative instruments.
 
-###Analyzed derivatives:##### • Buy EUR sell PLN FX Forward (maturity: 1 year, notional: 100 000 EUR; strike: 4,3930)
+### Analyzed derivatives:##### • Buy EUR sell PLN FX Forward (maturity: 1 year, notional: 100 000 EUR; strike: 4,3930)
 ##### • Receiver (we receive fixed rate) PLN WIBOR 3M IRS (maturity: 3 years, notional: 500 000 PLN; fixed rate: 2,2144% - paid annually)
 ##### • EUR/PLN CIRS, paid rate: fixed rate (-0,0575%) in EUR, received rate WIBOR 3M, notional exchange at the beginning as well as end of the contract (maturity: 3 years, notional: 100 000 EUR/ 430 000 PLN)
 
