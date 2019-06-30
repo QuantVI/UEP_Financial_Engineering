@@ -1,0 +1,405 @@
+---
+title: "Markov chains. Simple Gibbs sampler"
+output: html_notebook
+---
+In the case of the posterior distributions which are very difficult (or impossible) to derive analytically, special algorithms are used to approximate the distributions. This and next classes will be devoted to introduction of such techniques. We will start with the definition of stochastic processess and introduce a special kind of them called Markov processess. Based upon the processess we will introduce the simple Gibbs sampler.
+
+# Stochastic processess
+A stochastic process can be viewed as a sequence of stochastic variables indexed by time. The values assumed by random variables $X_i$ are called states of the process, and the set of the states is called the state space. If $X_1=i$ and $X_2=j$ then we say that the process has made a transition from state $i$ at step 1 to state $j$ at step 2. Often we are interested in the behaviour of the process over the long run - after many transitions. An example of the process can be the result of the coin flip. A special kind of processess are the Markov ones.
+
+# Two-state Markov Chain
+A 2-state Markov chain is a sequence of random variables $X_{(n)}, n=1,2,...$, that take only two values, e.g. 0 and 1. The random variables are not necessarily independent, but their dependence is of a restricted nature, i.e.:
+$$
+p_{01}=P(X_n=1|X_{n-1}=0,X_{n-2}=i_{n-2},...,X_1=i_1)=P(X_n=1|X_{n-1}=0)=\alpha.
+$$
+Thus, the probability of change from state 0 to 1 does not depend on the way the process got to the state 0. Consequently:
+$$
+p_{00}=P(X_n=0|X_{n-1}=0)=1-\alpha.
+$$
+Similarly:
+$$
+p_{10}=P(X_n=0|X_{n-1}=1)=\beta
+$$
+and:
+$$
+p_{11}=P(X_n=1|X_{n-1}=1)=1-\beta
+$$
+This "one-step-most" property of the chain is called Markov property.
+We will consider HOMOGENEOUS Markov chains, for which the probabilities $\alpha$ and $\beta$ do not change over time. 
+
+### Example 
+(Source:"Introduction to probability simulation and Gibbs sampling with R", Chapter 6)
+According to data collected by park rangers and reported by Weisberg (1985) erruptions of the Old Faithful geyser in Yellowstone National Park can be classified as Long (1) or Short (0). Short eruptions are always followed by the Long ones and about 44% of the Long ones are followed by the Short ones. Thus, we can set $\alpha=1$ and $\beta=0.44$. The eventual transition to a Short eruption is governed by the geometric distribution with probability 0.44 - so the average length of Long eruptions will be about $1/0.44=2.2727$ (expected value of a geometric distribution). On average there will be 2.2727 Long eruprions, then a Short one which will be again followed by a Long one. So there will be on average 3.2727 in the complete cycle. Thus, over the long run the proportion of Long eruptions will be 2.2727/3.2727 = 69.44%.
+
+#### Excercise 1
+
+Simulate $m=2000$ steps of the Markov chain. From the results, approximate long-run proportion of the Long eruptions and the average cycle length. Approximate the number of cycles by the number of 0->1 transitions and the average cycle length by the ratio of the total steps to the number of transitions. 
+
+```{r}
+m<-2000
+n<-1:m
+state<-numeric(m)
+state[1]<-rbinom(1,1,0.5) #decide by the toss of a coin about the initial state
+
+#probabilities:
+alpha<-1
+beta<-0.44
+
+#Markov chain
+for(i in 2:m){
+  if(state[i-1]==0){
+    state[i]<-rbinom(1,1,alpha)
+  }
+  else{
+    state[i]<-rbinom(1,1,1-beta)
+  }
+}
+
+fraction<-cumsum(state)/n
+mean(state)  #franction of long eruptions
+
+#approximate the number of state changes
+state_change<-numeric(m)
+state_change[2:m]<-state[1:m-1]-state[2:m]
+sum(abs(state_change))
+a<-sum(state_change==-1)
+#a<-sum(state[1:(m-1)]==0 & state[2:m]==1)
+m/a
+plot(fraction,type="l",ylim=c(0,1))
+plot(acf(state))
+```
+The autocorrelation of larger orders trend quickly to values that do not differ significantly form 0, which tells us that the simulated values of $X_n$ have a limiting distribution that does not depend on the initial state.
+
+## Transition matrx
+
+Let us denote by $p_ij$ the following probability $P(X_{n+1}=j|X_{n}=i)$ - i.e. the one-step transition from state $i$ to $j$, where $i,j=0,1.$ We arrange the probabilities into the following matrix:
+$$
+\mathbf{P}=
+\begin{bmatrix}
+    p_{00}       & p_{01} \\
+    p_{10}       & p_{11}  \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+    1-\alpha       & \alpha \\
+    \beta      & 1-\beta  \\
+\end{bmatrix}
+$$
+We note that in each row we have conditional probabilities that sum to 1. 
+We can show that the 2-step transition matrix can be computed by simple multiplication of the matrix P, i.e.:
+$$
+\mathbf{P^2} =\frac{1}{\alpha+\beta} 
+\begin{bmatrix}
+   \beta       & \alpha \\
+    \beta       & \alpha  \\
+\end{bmatrix}
++ \frac{(1-\alpha-\beta)^2}{\alpha+\beta}
+\begin{bmatrix}
+   \alpha       & -\alpha \\
+   - \beta       & \beta \\
+\end{bmatrix}
+$$
+We can also use the Chapman-Kolmogorov equation:
+$$
+p_{ij}(2)=\sum_{k\in S} p_{ik}p_{kj}
+$$
+(as a home excercise you can check that the two equations produce the same result)
+Similarly, the $r$-step transition matrix is found by the $r$-th power of $P$ (for $\alpha+\beta>0$):
+$$
+\mathbf{P^r} =\frac{1}{\alpha+\beta} 
+\begin{bmatrix}
+   \beta       & \alpha \\
+    \beta       & \alpha  \\
+\end{bmatrix}
++ \frac{(1-\alpha-\beta)^r}{\alpha+\beta}
+\begin{bmatrix}
+   \alpha       & -\alpha \\
+   - \beta       & \beta \\
+\end{bmatrix}
+$$
+
+#### Excercise 2
+
+Write the transition matrix to the example from the Excerise 1. Given that the first eruption was Short (0), find the conditional probability that the third eruption will be Long (1). Use matrix multiplication. Hint - to multiply two matrices we use %*%. To declare a matrix use function matrix(). Use R help (or Google) for details.
+
+```{r}
+
+```
+#### Excercise 3
+
+Compute P2, P4, P8 and P16. What is the conditional probability that the third eruption will be Long (1) - after 4,8,16 steps? What do you notice?
+
+```{r}
+
+```
+
+## Limiting behaviour of the 2-state chain
+
+We expressed the $P^r$ matrix as a sum of two matrices. One part of the equation is independent of $r$, while the second is expressed as:
+
+$$
+\frac{(1-\alpha-\beta)^r}{\alpha+\beta}
+\begin{bmatrix}
+   \alpha       & -\alpha \\
+   - \beta       & \beta \\
+\end{bmatrix}
+$$
+Let us denote by $\Delta = (1-\alpha-\beta)$. Thus, for $|\Delta|<1$ the term vanishes with $r$. So:
+
+$$
+\Lambda = \lim_{r\rightarrow\infty}\mathbf{P^r}=\frac{1}{\alpha+\beta}
+\begin{bmatrix}
+   \beta       & \alpha \\
+    \beta       & \alpha \\
+\end{bmatrix}
++\frac{\lim_{r\rightarrow\infty}\Delta^r}{\alpha+\beta}
+\begin{bmatrix}
+   \alpha       & -\alpha \\
+   - \beta       & \beta \\
+\end{bmatrix}
+=
+\frac{1}{\alpha+\beta}
+\begin{bmatrix}
+   \beta       & \alpha \\
+    \beta       & \alpha \\
+\end{bmatrix} 
+=
+\begin{bmatrix}
+\mathbf{\lambda} \\
+\mathbf{\lambda} \\
+\end{bmatrix}
+$$
+where:
+
+$$
+\mathbf{\lambda}=
+\begin{bmatrix}
+\lambda_0 & \lambda_1 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+\frac{\beta}{\alpha+\beta} & \frac{\alpha}{\alpha+\beta}\\
+\end{bmatrix}
+$$
+The condition $|1-(\alpha+\beta)|<1$ excludes the deterministic cases when $\alpha=\beta=0$ (never move) and $\alpha+\beta=2$. The rate of convergence is GEOMETRIC, i.e. is very rapid unless $|\Delta|$ is very near to 1 - see the Example 3.
+
+Thus, for a 2-state Markov chain it is easy to conclude whether the chain will converge - i.e. whether it has a long-run distribution and to compute the limiting probabilities $\lambda_1$ and $\lambda_0$. However, knowledge about the probability structure does not reveal exactly how the chain will behave in practice in a particular instance. If we approximate the long-run probability $\lambda_1$ by simulating $\bar{X}_m$ the convergence can be relatively slow, requiring $m$ to be thousands. See the following examples.
+
+### Independent chain
+
+Let us take an independent sample from a population in which a proportion of individuals infected by a disease is $\alpha=0.02$. If the $n$th individual  is infected, $X_n=1$, if not $X_n=0$.
+
+#### Excercise 4
+
+Write the transition matrix for the chain. Calculate P, P2, P4, P8. Using the knowledge of the binomial confidence interval, compute how many simulations would we need to make the chain converge, if we require .01 accuracy for the estimated long-run probability. What if we require accuracy of 0.005?
+Hint: the margin of error for 95% confidence interval for estimating $\pi$ was:
+
+$$
+E= 1.96\cdot \sqrt{\frac{p(1-p)}{n}}
+$$
+```{r}
+P<-matrix(c(0.98,0.02,0.98,0.02),nrow=2,ncol=2,byrow = T)
+P
+P %*% P
+#notice P x P is the same as P
+```
+```{r}
+# E = 1.96 * sqrt ( [p*(1-p)]/n)
+# we are using 0.98 for p, and  0.02 for 1-p
+p_ = 0.98
+E_1 = .01
+E_2 = .005
+# E = 1.96 * sqrt( (p_*(1-p_))/n)
+# We are trying to solve for E (accuracy) of 0.01
+  # E^2 = 1.96^2 * p*(1-p)/n
+  # n * E^2 = 1.96^2 * p*(1-p)
+  # n = 1.96^2 * p*(1-p) / E^2
+n1 = ((1.96^2)* (p_*(1-p_)))/ (E_1^2)
+n2 = ((1.96^2)* (p_*(1-p_)))/ (E_2^2)
+
+# so for 1% accuracy we'd need a sample size of at least 752.95
+# for a 0.5% accuracy, we'd need a sample size of at least 3011.81
+```
+
+### An almost-absorbing chain
+
+#### Excercise 5
+
+Consider a chain with $\alpha=0.0123$ and $\beta=0.6$. Compute $\lambda_0$ and $\lambda_1$. Next, calculate  P, P2, P4, P8 and P16. What can you say about the speed of convergence? Compute the number of simulations required to have the accuracy of 0.01. Compare with the previous case. Why have we named the chain "an almost-absorbing"? What does it mean in practice? (How long will the chain remain in the state 0 if it enters it? - compute the length of staying using the appropriate formula)
+
+```{r}
+alpha = 0.0123
+beta = 0.6
+# 1/aplha = how long in state zero
+# 1/beta = how long in state 1
+# adding both = how long for whole cycle
+m2 = matrix(c(1-alpha,alpha,beta,1-beta),nrow=2,ncol=2,byrow = T)
+m2
+P2 = m2 %*% m2
+P4 = P2 %*% P2
+P8 = P4 %*% P4
+P16 = P8 %*% P8
+mmult  = function(m,t){
+  out = m
+  for (i in 1:t) {
+    out = out %*% out
+  }
+  out
+}
+mmult(P2,5)
+# P32 is the last change
+#
+lambda0 = alpha/(alpha+beta)
+lambda1 = beta/(alpha+beta)
+1/alpha
+1/beta
+```
+
+
+## A simple Gibbs sampler
+
+Gibbs sampler is a simulated Markov chain $X_1, X_2, ...$ that is constructed to have a desired long-run distribution. In Bayesian estimation it is used to approximate distributions that would be very difficult or impossible to derive analytically. By observing enough simulated values of $X_n$ after the simulation has stabilized, we hope that the distribution of the sampled $X_n$ will approximate the long-run distribution.
+
+#### Example 3 
+(source: "Introduction to probability simulation and Gibbs sampling with R", Chapters 5 and 6)
+
+Screening tests (diagnostic tests) are used in wide variety of fields: public health, surgery, industrial quality management, satellite mapping, communications, banking, etc. In the simplest case population is divided into two groups: a particular member of population is infected or free of disease, a prospective borrower will default on the loan or not, etc. Let us define two random variables $T$ and $D$. $T$ will denote the output of the test, while $D$ - whether a person is infected by a disease. Each of the variables will take values 0 and 1. Let us subsequently define:
+
+You can write this as a tree. First, the population already is split (not by us) into D=0 and D=1.
+Then from each, we test, and we will get T=0 and T=1 for both of those branches.
+
+  + Sensitivity of the test:
+  
+$$
+\eta =P(T=1|D=1)
+$$ 
+ 
+  + Specifity of the test:
+
+$$
+\theta = P(T=0|D=0)
+$$ 
+ 
+  + Positive prevalence (PV positive):
+  
+$$
+\gamma = P(D=1|T=1)
+$$ 
+  
+  + Negative prevalence (PV negative):
+  
+$$
+\delta =P(D=0|T=0)
+$$ 
+
+Let us assume that we are interested in finding the unconditional prevalence of the test (i.e. $P(D=1)$). We will show how to approximate it with Gibbs sampler.
+The idea is to construct a Markov chain $D_1, D_2, ...$. The first value can be chosen arbirtraly (0 or 1). Depending on the value of $D_{n-1}$ we obtain $D_n$ in two half-steps. In the first one, we will use the conditional distribution of $T|D$ to simulate a value of $T_{n-1}$, while in the second - conditional distribution of $D|T$ to simulate a value of $D_n$. We know the following:
+$$
+T_{n-1} \sim BINOM(1,\eta) \text{  if: }D_{n-1}=1 \text{ or: }\\
+T_{n-1} \sim BINOM(1,1-\theta) \text{  if: } D_{n-1}=0\text{.}\\
+D_{n} \sim BINOM(1,\gamma) \text{  if:  } T_{n-1}=1 \text{ or: }\\
+D_{n} \sim BINOM(1,1-\delta) \text{  if:  } T_{n-1}=0.
+$$
+We expect that the chain will stabilize after some BURN-IN PERIOD. We will check it graphically.
+
+#### Excrcise 6
+Asume that $\eta=0.99$, $\theta=0.97$, $\gamma=0.4024$ and $\delta=0.9998$. Simulate the Markov chain for m=80000.
+
+```{r}
+
+m<-80000
+eta<-0.99
+theta<-0.97
+gamma<-0.4024
+delta<-0.9998
+D_n<-numeric(m)
+T_n<-numeric(m)
+
+D_n[1]<-rbinom(1,1,0.5)   #first value of D_n
+#D_n[1]<-0
+
+for(i in 2:m){  #simulate T(n-1)
+  if(D_n[i-1]==1) {
+    T_n[i-1]=rbinom(1,1,eta)
+  }
+  else{
+    T_n[i-1]=rbinom(1,1,1-theta)
+  }
+  
+                #simulate D(n)
+  if(T_n[i-1]==1) {
+    D_n[i]=rbinom(1,1,gamma)
+  }
+  else{
+    D_n[i]=rbinom(1,1,1-delta)
+  }
+}
+
+infected_prop<-cumsum(D_n)/1:m
+#proportion of infected in each iteration
+
+#assume burn-in period in half of the sample
+
+burn_in_end <-m/2 
+meanD<-mean(D_n[(burn_in_end+1):m])
+meanD  #prevalence after the burn-in period
+
+####GRAPHIC
+
+par(mfrow=c(1,2))
+  plot(infected_prop,type="l", ylim=c(0.0,0.05), xlab="Step", ylab="Running proportion infected")
+  acf(D_n,ylim=c(-.1,.4),xlim=c(1,10))
+par(mfrow=c(1,1))
+
+
+acf(D_n,plot=F)
+
+```
+
+We can see that the chain stabilizes after about 40000iterations, so we can assume a burn-in period of 40 000 observations. The average value of the last simulated 40 000 values of D is 0.019, so the value of $\lambda_1$ i.e. $P(D=1)=0.02$. We can also notice that the starting value of D (0 or 1) has a negligible influence on the eventual result.
+THe estimated first-order autocorrelations of the $D_n$ amounted to about 0.4 and for each run autocorrelations of higher order converge quickly to 0. This is an evidence that the Markov dependence wears off quickly.
+
+### INTUITION:
+
+Trying to simulate $\pi=P(D=1)=0.02$ from the conditional distribution $D|T$ only is ineffective. The probability $P(D=1|T=1)=0.4024$ is too big, while the probability $P(D=1|T=0)=0.0002$ much too small. However, as the simulation runs through the steps of the Markov chain, the effect of conditional distribution $T|D$ becomes visible and assures that in the long run both probabilities $P(D=1|T=0)$ and $P(D=1|T=1)$ are used the appropriate proportion of time. Eventually, we get 0.02 as a long-run weighted average of the two probabilities: 0.0002 and 0.4024.
+
+
+#### Excercises
+
+#### Problem 1
+Suppose the weather for a day is either Dry (0) or Rainy (1) according to a two-state Markov chain with $\alpha=0.1$ and $\beta=0.5$. Today it is Monday (n=1) and the weather is Dry.
+1. What is the probability that both tomorrow and on Wednesday it will be dry?
+2. What is the probability that it will be Dry on Wednesday?
+3. What is the probability that it will be Dry two weeks after Wednesday (n=17)?
+4. Write the code to find the probability from the point 3.
+5. What is the proportion of Rainy days in the long run? Write an appropriate R code to find the sollution.
+6. What is the average length of runs of Rainy days?
+7. Find the answers for $\alpha=0.15$ and $\beta=0.75$
+
+
+```{r}
+
+```
+
+
+#### Problem 2
+We consider a screening test for a particular disease with sensitivity $\eta=0.8$ and specifity $\theta=0.7$. For a particular population assume $\gamma=0.4$ and $\delta=0.9$.
+1(*). Compute prevalence $\pi$ analytically.
+2. Write a simple Gibbs sampler to aproximate $\pi$.Adjust a verrtical scale of the plot, the length of run $m$ and the burn-in period.Run the simulation several times and write down the results. Plot the autocorrelation function. 
+
+```{r}
+m<-80000
+eta<-0.8
+theta<-0.7
+gamma<-0.4
+delta<-0.9
+D_n<-numeric(m)
+T_n<-numeric(m)
+
+
+####GRAPHIC
+
+
+
+```
+

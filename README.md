@@ -27,9 +27,11 @@ __Selcected materials from__:
   - Derivatives Pricing :chart_with_downwards_trend:
       - VBA Macro for pricing and analysis of a Fixed-Strike Lookback option
 1. Semester :three:
-  - Bayesian Methods in Finance
-  - Financial Market Modeling
+  - Bayesian Methods in Finance :link:
+      - Markov Chains & Gibbs Sampler
+  - Financial Market Modeling :chart:
+      - Seasonal ARIMA model of the US unemployment rate
 1. Semester :four:
-  - Exotic Options
-  - Credit Valuation Adjustment
+  - Exotic Options :currency_exchange:
+  - Credit Valuation Adjustment :credit_card:
  
